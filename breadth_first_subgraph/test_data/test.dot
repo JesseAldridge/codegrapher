@@ -1,0 +1,6 @@
+digraph G {
+  "Builtins:init" -> "Builtins$OsModule:<init>"
+  "Builtins$OsModule:<init>" -> baz
+  "Builtins$OsModule:<init>" -> stuff
+  "Builtins$OsModule:<init>" -> stuff
+}
