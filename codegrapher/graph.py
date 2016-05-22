@@ -61,6 +61,7 @@ class FunctionGrapher(object):
     def __init__(self):
         self.name = ''
         self.dot_file = Digraph()
+        self.dot_file.graph_attr['rankdir'] = 'LR'
         self.nodes = set()
         self.edges = set()
 
