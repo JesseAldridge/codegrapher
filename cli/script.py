@@ -23,7 +23,8 @@ def cli(code, recursive, printed, ignore, remove_builtins, output, output_format
     """
     file_list = []
     if recursive:
-        for dirpath, dirnames, filenames in os.walk(code):
+        for dirpath, dirnames, filenames in os.walk(code, topdown=True):
+            dirnames[:] = [d for d in dirnames if d != 'site-packages']
             for filename in filenames:
                 if re.search(r'\.py$', filename):
                     file_list.append(os.sep.join([dirpath, filename]))
