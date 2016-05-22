@@ -12,19 +12,21 @@ from codegrapher.parser import FileObject
 @click.option('-r', '--recursive', default=False, is_flag=True,
               help='Treat code argument as a directory and parse all files in directory, recursively')
 @click.option('--printed', default=False, is_flag=True, help='Pretty prints the call tree for each class in the file')
-@click.option('--ignore', default=False, is_flag=True, help='Use a .cg_ignore file to ignore functions in call tree')
+@click.option('--use-cg-ignore', default=False, is_flag=True, help='Use a .cg_ignore file to ignore functions in call tree')
+@click.option('--ignore-dir', help='Ignore a directory', multiple=True)
 @click.option('--remove-builtins', default=False, is_flag=True, help='Removes builtin functions from call trees')
 @click.option('--output', help='Graphviz output file name')
 @click.option('--output-format', default='pdf', help='File type for graphviz output file')
-def cli(code, recursive, printed, ignore, remove_builtins, output, output_format):
+def cli(code, recursive, printed, use_cg_ignore, ignore_dir, remove_builtins, output, output_format):
     """
     Parses a file.
     codegrapher [file_name]
     """
     file_list = []
     if recursive:
+        exclude = {'site-packages'} | set(ignore_dir)
         for dirpath, dirnames, filenames in os.walk(code, topdown=True):
-            dirnames[:] = [d for d in dirnames if d != 'site-packages']
+            dirnames[:] = [d for d in dirnames if d not in exclude]
             for filename in filenames:
                 if re.search(r'\.py$', filename):
                     file_list.append(os.sep.join([dirpath, filename]))
@@ -33,11 +35,12 @@ def cli(code, recursive, printed, ignore, remove_builtins, output, output_format
 
     graph = None
     for file_name in file_list:
+        print 'file_name:', file_name
         file_object = FileObject(file_name)
         file_object.visit()
         if remove_builtins:
             file_object.remove_builtins()
-        if ignore:
+        if use_cg_ignore:
             file_object.add_ignore_file()
             file_object.ignore_functions()
         if printed:
