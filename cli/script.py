@@ -57,6 +57,7 @@ def cli(code, recursive, printed, use_cg_ignore, ignore_dir, remove_builtins, ou
                 graph = FunctionGrapher()
                 graph.add_file_to_graph(file_object)
     if output:
+        print 'rendering...'
         graph.name = output
         graph.format = output_format
         graph.render()
